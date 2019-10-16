@@ -1,0 +1,27 @@
+﻿{
+  "name": "kawaii-potato",
+  "version": "2.9.4",
+  "description": "A simple node JS discord bot for multiples purposes.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chrissdroid/Kawaii-Potato.git"
+  },
+  "author": "ΛsтroΛlex",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chrissdroid/Kawaii-Potato/issues"
+  },
+  "homepage": "https://github.com/Chrissdroid/Kawaii-Potato#readme",
+  "dependencies": {
+    "better-sqlite-pool": "^0.2.2",
+    "dialogflow": "^0.12.1",
+    "discord.js": "^11.5.1",
+    "enmap": "^5.2.0",
+    "fs": "0.0.1-security",
+    "uuid": "^3.3.3"
+  }
+}
