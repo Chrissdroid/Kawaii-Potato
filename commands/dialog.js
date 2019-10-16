@@ -5,9 +5,8 @@ exports.run = async (client, message, args) => {
     if (!args.length || args.length < 1) return message.reply('You will need a argument for that !');
 
     const projectId = 'a-e-g-i-s--nbnlib';
-    const sessionId = 'AIzaSyDNjR7m7ekNJ-XoV6tQnAZJ3v6wATOVRZM'
+    const sessionId = 'AIzaSyDNjR7m7ekNJ-XoV6tQnAZJ3v6wATOVRZM';
 
-    // Create a new session
     const sessionClient = new dialogflow.SessionsClient();
     const sessionPath = sessionClient.sessionPath(projectId, sessionId);
 
@@ -15,12 +14,10 @@ exports.run = async (client, message, args) => {
         session: sessionPath,
         queryInput: {
             text: {
-                // The query to send to the dialogflow agent
-                text: args.join(''),
-                // The language used by the client (en-US)
-                languageCode: 'en-US',
-            },
-        },
+                text: args.join(' '),
+                languageCode: 'fr-FR'
+            }
+        }
     };
 
     // Send request and log result
@@ -34,4 +31,5 @@ exports.run = async (client, message, args) => {
     } else {
         console.log(`  No intent matched.`);
     }
+    message.channel.send(result.fulfillmentText);
 };

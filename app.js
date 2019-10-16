@@ -216,7 +216,7 @@ class classLog {
 
 
 function timeToString(date = new Date()) {
-	return date.toLocaleDateString("en-US") + " " + date.toLocaleTimeString("en-US");
+	return date.toLocaleString("en-US");
 }
 
 fs.readdir("./events/", (err, files) => {
