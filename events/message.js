@@ -5,7 +5,11 @@ getRandomInteger = (min = 0, max = 20) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
-}
+};
+
+timeToString = (date = new Date()) => {
+    return date.toLocaleString("en-US");
+};
 
 module.exports = async (client, message) => {
     if (!message.guild || message.author.bot) return;
@@ -17,8 +21,9 @@ module.exports = async (client, message) => {
         modRole: "Moderator",
         adminRole: "Administrator"
     };
-  
+    
     message.guild.conf = client.settings.ensure(message.guild.id, defaultSettings);
+    client.log.guild = message.guild;
 
     if (message.guild.conf.xpEnabled) {
         const key = message.author.id;

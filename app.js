@@ -28,6 +28,11 @@ client.items.ensure(1, {
 	value: 25
 });
 
+/**
+ * Gives a selected profile.
+ * @param {string} id - An userID of who you want get the profile.
+ * @returns {Object} - Returns profile of the targeted User.
+ */
 client.profile = (id) => {
 	if (typeof id === 'undefined') return;
 	const defaultProfile = {
@@ -60,164 +65,111 @@ client.profile = (id) => {
 	return active;
 };
 
-client.log = (obj, title = "Log", guild, target, unique = false) => {
-
-    const logembed = new Discord.RichEmbed()
-        .setTitle(title)
-        .setFooter(client.user.tag, client.user.avatarURL)
-        .setTimestamp(new Date());
-
-    if (unique === true) {
-        if (typeof obj === "string") {
-            console.log(`[${timeToString()}] => "${title}": "${obj}"\n`);
-        }
-        else if (typeof obj === "object") {
-            console.log(`[${timeToString()}] => "${title}": "${JSON.stringify(obj)}"\n`);
-        }
-        else return console.log("ERR : obj to log undefined.");
-    }
-    else {
-        if (typeof obj === "string") {
-
-            if (typeof target === 'object') {
-                logembed.setAuthor(target.tag, target.avatarURL);
-            }
-
-            logembed.setDescription(obj);
-
-            console.log(`[${timeToString()}] => "${title}": "${obj}"`);
-
-            const guildSettings = guild ? client.settings.get(guild.id) : 0;
-            if (guildSettings && guildSettings.logsEnabled && client.guilds.get(guild.id).channels.find(name => guildSettings.logChannel = name)) {
-                client
-                    .guilds.get(guild.id)
-                    .channels.find(name => guildSettings.logChannel = name)
-                    .send({ embed: logembed });
-                logembed.setThumbnail(guild.iconURL);
-            }
-
-            client
-                .guilds.get(client.config.default.guild.id)
-                .channels.get(client.config.default.guild.channels.logs)
-                .send({ embed: logembed });
-        }
-        else if (typeof obj === "object") {
-            if (typeof target === 'object') {
-                logembed.setAuthor(target.tag, target.avatarURL);
-            }
-
-            logembed.setDescription(obj.message);
-
-            console.log(`[${timeToString()}] => "${title}": "${JSON.stringify(obj)}"\n`);
-
-            while (i in obj.fields) {
-                logembed.addField(i.name, i.value, i.inline);
-            }
-
-            const guildSettings = client.settings.get(guild.id);
-            if (guildSettings && guildSettings.logsEnabled && client.guilds.get(guild.id).channels.find(name => guildSettings.logChannel = name)) {
-                client
-                    .guilds.get(guild.id)
-                    .channels.find(name => guildSettings.logChannel = name)
-                    .send({ embed: logembed });
-                logembed.setThumbnail(guild.iconURL);
-            }
-
-            client
-                .guilds.get(client.config.default.guild.id)
-                .channels.get(client.config.default.guild.channels.logs)
-                .send({ embed: logembed });
-        }
-        else throw new Error("obj to log undefined.");
-    }
-};
-
-
+/** Class representing a log instance for target server. */
 class classLog {
-	constructor(guild) {
-		this.activeGuild = guild;
-	}
+    /**
+     * Created a new log instance.
+     * @param {string} [guild] - Representing a guild id of the targeted server.
+     */
+    constructor(guild = null) {
+        this.guild = guild;
+    }
 
-	static send(obj, title = "Log", target = null, unique = false) {
-		const logembed = new Discord.RichEmbed()
-			.setTitle(title)
-			.setFooter(client.user.tag, client.user.avatarURL)
-			.setTimestamp(new Date());
+    /**
+     * Set a new guild.
+     * @param {string} guild - Representing a guild id of the targeted server.
+     */
+    set guild(guild = null) {
+        this.activeGuild = guild;
+    }
 
-		if (unique === true) {
-			if (typeof obj === "string") {
-				console.log(`[${timeToString()}] => "${title}": "${obj}"\n`);
-			}
-			else if (typeof obj === "object") {
-				console.log(`[${timeToString()}] => "${title}": "${JSON.stringify(obj)}"\n`);
-			}
-			else return console.log("ERR : obj to log undefined.");
-		}
-		else {
-			if (typeof obj === "string") {
+    /**
+     * Send message to console
+     * @param {string} title - Title of the logObject
+     * @param {string} msg - Message of the logObject
+     */
+    console(title, msg) {
+        console.log(`[${new Date().toLocaleString("en-US")}] => "${title}": "${msg}"\n`);
+    }
 
-				if (typeof target === 'object') {
-					logembed.setAuthor(target.tag, target.avatarURL);
-				}
+    /**
+     * Create a new log in the guild.
+     * @param {(string|Object)} obj - Log content, can be a string or a Discord's RichEmbed fields format
+     * @param {string} title - Title of the new log
+     * @param {Object} options - Options of the log.
+     * @param {string} options.target - userID of a potential targeted user
+     * @param {number} options.color - Color used in the embed
+     * @param {string} options.show - userID of a potential targeted user
+     */
+    new(obj, title = "Log", { target: target, color: color, show: show } = {
+            target: null,
+            color: null,
+            show: 'all'
+    }) {
+        if (typeof obj === 'undefined') throw new Error("Log object undefined");
+        let mode = typeof obj === "string" ? true : false;
+        if (!mode && obj.fields === 'undefined' || obj.message === 'undefined') throw new Error(`Invalid object format.`);
 
-				logembed.setDescription(obj);
+        const logembed = new Discord.RichEmbed()
+            .setTitle(title)
+            .setFooter(client.user.tag, client.user.avatarURL)
+            .setTimestamp(new Date());
 
-				console.log(`[${timeToString()}] => "${title}": "${obj}"`);
+        if (color) logembed.setColor(color);
 
-				const guildSettings = this.activeGuild ? client.settings.get(this.activeGuild.id) : 0;
-				if (guildSettings && guildSettings.logsEnabled && client.guilds.get(this.activeGuild.id).channels.find(name => guildSettings.logChannel = name)) {
-					client
-						.guilds.get(this.activeGuild.id)
-						.channels.find(name => guildSettings.logChannel = name)
-						.send({embed : logembed});
-					logembed.setThumbnail(guild.iconURL);
-				}
+        if (target && typeof target === 'object') {
+            logembed.setAuthor(target.tag, target.avatarURL);
+        }
 
-				client
-					.guilds.get(client.config.default.guild.id)
-					.channels.get(client.config.default.guild.channels.logs)
-					.send({embed : logembed});
-			}
-			else if (typeof obj === "object") {
-				if (typeof target === 'object') {
-					logembed.setAuthor(target.tag, target.avatarURL);
-				}
+        switch (typeof obj) {
+            case 'string':
+                logembed.setDescription(obj);
+                break;
 
-				logembed.setDescription(obj.message);
+            case 'object':
+                logembed.setDescription(obj.message);
 
-				console.log(`[${timeToString()}] => "${title}": "${JSON.stringify(obj)}"\n`);
+                while (i in obj.fields) {
+                    logembed.addField(i.name, i.value, i.inline);
+                }
+                break;
 
-				while (i in obj.fields) {
-					logembed.addField(i.name, i.value, i.inline);
-				}
+            default:
+                throw new Error(`Invalid object type "${typeof obj}" provided.`);
+        }
 
-				const guildSettings = client.settings.get(guild.id);
-				if (guildSettings && guildSettings.logsEnabled && client.guilds.get(guild.id).channels.find(name => guildSettings.logChannel = name)) {
-					client
-						.guilds.get(guild.id)
-						.channels.find(name => guildSettings.logChannel = name)
-						.send({embed : logembed});
-					logembed.setThumbnail(guild.iconURL).then(msg => this.previousMsg = {message: msg, embed: logembed});
-				}
+        switch (show) {
 
-				client
-					.guilds.get(client.config.default.guild.id)
-					.channels.get(client.config.default.guild.channels.logs)
-					.send({embed : logembed});
-			}
-			else throw new Error("obj to log undefined.");
-		}
-	}
+            case 'all':
+                const guildSettings = this.activeGuild ? client.settings.get(this.activeGuild.id) : 0;
+                if (guildSettings && guildSettings.logsEnabled && client.guilds.get(this.activeGuild.id).channels.some(chan => guildSettings.logChannel === chan.name)) {
+                    client
+                        .guilds.get(this.activeGuild.id)
+                        .channels.find(chan => guildSettings.logChannel === chan.name)
+                        .send({ embed: logembed });
+                    logembed.setThumbnail(this.activeGuild.iconURL);
+                }
+                /* falls through */
+            case 'DSonly':
+                client
+                    .guilds.get(client.config.default.guild.id)
+                    .channels.get(client.config.default.guild.channels.logs)
+                    .send({ embed: logembed });
+                /* falls through */
+            case 'consoleOnly':
+                let ctt = obj;
+                if (!mode) ctt = JSON.stringify(obj);
+                this.console( title, ctt );
+                break;
 
-	static modify(obj, title = "Log", adding = true) {
-		if (!this.previousMsg) return this.send(obj, title)
-	}
+            default:
+                throw new Error(`Unreconized value options.show "${show}" provided.`);
+
+        }
+    }
 }
 
-
-function timeToString(date = new Date()) {
-	return date.toLocaleString("en-US");
-}
+client.log = new classLog();
 
 fs.readdir("./events/", (err, files) => {
 	if (err) return console.error(err);
