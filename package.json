@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Chrissdroid/Kawaii-Potato#readme",
   "dependencies": {
     "better-sqlite-pool": "^0.2.2",
+    "canvas": "^2.6.0",
     "dialogflow": "^0.12.1",
     "discord.js": "^11.5.1",
     "enmap": "^5.2.0",
